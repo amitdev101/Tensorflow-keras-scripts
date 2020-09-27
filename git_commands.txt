@@ -1,0 +1,12 @@
+1. First I made a repository from github website names as Tensorflow-keras-scripts
+2. Now I added a cats and dogs classifier file.
+3. Now I'll try to add it into my github repository.
+
+#### command used ####
+
+1. git clone https://github.com/amitdev101/Tensorflow-keras-scripts
+2. go inside this folder "Tensorflow-keras-scripts"
+3. As this folder was empty so i first call "git init" command
+4. Now I add a file "cats_and_dogs_classifier_tutorial.py" here inside the folder.
+5. Now run command "git add ." 
+6. Now I'll try to commit the changes.
