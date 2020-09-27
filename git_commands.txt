@@ -10,3 +10,6 @@
 4. Now I add a file "cats_and_dogs_classifier_tutorial.py" here inside the folder.
 5. Now run command "git add ." 
 6. Now I'll try to commit the changes.
+7. I set up my user.email and user.name with git command 
+git config --global --replace-all user.email "new@mail.com"
+git config --global --replace-all user.name "newname"
