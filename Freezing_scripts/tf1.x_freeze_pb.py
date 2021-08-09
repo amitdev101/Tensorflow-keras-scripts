@@ -1,4 +1,5 @@
 from typing import List
+import os
 import tensorflow as tf
 
 def freeze_session(session, keep_var_names=None, output_names=None, clear_devices=True):
@@ -31,11 +32,12 @@ def freeze_session(session, keep_var_names=None, output_names=None, clear_device
 
 
 def find_meta_info(metafile:str):
-    print("### processing file %s" %(metafile))
+    print("### processing file for extracting info '%s' " %(metafile))
     name = metafile.replace('.meta','')
+    ckptfile = metafile.replace(".meta",'')
     with tf.Session(graph=tf.Graph()) as sess :
         saver = tf.train.import_meta_graph(metafile)
-        saver.restore(sess.ckptfile)
+        saver.restore(sess,ckptfile)
         print("Model Restored Successfully")
         graph_def = tf.get_default_graph().as_graph_def()
         graph_nodes = [node for node in graph_def.node]
@@ -73,17 +75,29 @@ def find_meta_info(metafile:str):
 
 def freeze_pb(metafile:str,output_nodes_list:List[str],name=None): 
     # name is without .pb extension
+    print("### Processing meta file for freezing '%s' " %(metafile))
     if not name :
         name = metafile.replace('.meta','')
     pbname = name+'.pb'
     folder_to_save = "./freezed_pb"
-    ckptfile = metafile.replace("meta",'')
+    ckptfile = metafile.replace(".meta",'')
     tf.reset_default_graph()
     saver = tf.train.import_meta_graph(metafile)
     with tf.Session(config=tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)) as sess:
-        saver.restore(sess.ckptfile)
+        saver.restore(sess,ckptfile)
         print("Model Restored Successfully")
         output_nodes=output_nodes_list
         frozen_graph =  freeze_session (sess, output_names=output_nodes) # provide your output node list: by default freezing all nodes names
         tf.train.write_graph(frozen_graph, folder_to_save, pbname, as_text=False) 
-        print("Saved file in frozen_pb format named as '%s'" %(pbname))
+        print("Saved file in frozen_pb format in folder %s named as '%s'" %(folder_to_save,pbname))
+
+
+if __name__=="__main__":
+    metafiles = [f.name for f in os.scandir() if not f.is_dir() and (f.name).endswith('.meta')]
+    for metafile in metafiles :
+        # find_meta_info(metafile)
+        pass
+    ### freezing pb ###
+    output_nodes_list = ['Placeholder','generator/Conv_9/BiasAdd']
+    freeze_pb(metafiles[0],output_nodes_list,name='cartoon-conv9')
+    
